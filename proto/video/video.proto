@@ -14,6 +14,7 @@ message VideoPayload {
   string description = 5;
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
+  string user_id = 8;
 }
 
 message UploadVideoInput {
@@ -21,6 +22,7 @@ message UploadVideoInput {
   bytes thumbnail_image = 2;
   string title = 3;
   string description = 4;
+  string user_id = 5;
 }
 
 
