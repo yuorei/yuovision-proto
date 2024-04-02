@@ -1,0 +1,2 @@
+gen:
+	./shell/gen.sh

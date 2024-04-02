@@ -1,0 +1,39 @@
+name: Generate gRPC code
+on:
+  push:
+    branches: main
+    paths:
+      - 'proto/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Protobuf Compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+          npm install -g protoc-gen-ts
+
+      - name: Generate Go Code
+        run: |
+          mkdir -p go/video
+          go mod init grpc/generated
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          protoc-gen-go --version
+          protoc -I=proto/video --go_out=go/video --go-grpc_out=go/video proto/video/*.proto
+          go mod tidy
+          rm go.mod go.sum
+
+      - name: Commit and Push Generated Code
+        run: |
+          git config user.name "gRPC Bot"
+          git config user.email "grpc@example.com"
+          git pull
+          git add -A
+          git commit -m "chore: regenerate grpc code"
+          git push

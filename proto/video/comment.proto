@@ -1,0 +1,65 @@
+syntax = "proto3";
+package comment;
+
+option go_package = "/video_grpc";
+
+import "google/protobuf/timestamp.proto";
+
+message Comment {
+  string id = 1;
+  Video video = 2;
+  string text = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  User user = 6;
+}
+
+message PostCommentInput {
+  string video_id = 1;
+  string text = 2;
+}
+
+message PostCommentPayload {
+  string id = 1;
+  Video video = 2;
+  string text = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  User user = 6;
+}
+
+service CommentService {
+  rpc CommentsByVideo(CommentsByVideoInput) returns (CommentsResponse);
+  rpc Comment(CommentID) returns (PostCommentPayload);
+  rpc PostComment(PostCommentInput) returns (PostCommentPayload);
+}
+
+message CommentID {
+  string id = 1;
+}
+
+message CommentsByVideoInput {
+  string video_id = 1;
+}
+
+message CommentsResponse {
+  repeated Comment comments = 1;
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string profile_image_url = 3;
+  repeated string subscribe_channel_ids = 4;
+}
+
+message Video {
+  string id = 1;
+  string video_url = 2;
+  string title = 3;
+  string thumbnail_image_url = 4;
+  string description = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  User uploader = 8;
+}

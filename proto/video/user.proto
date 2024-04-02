@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/video_grpc";
+
+import "google/protobuf/empty.proto";
+
+message UserPayload {
+  string id = 1;
+  string name = 2;
+  string profile_image_url = 3;
+  repeated string subscribe_channel_ids = 4;
+}
+
+message UserInput {
+  string name = 1;
+}
+
+message SubscribeChannelInput {
+  string channel_id = 1;
+}
+
+message SubscriptionPayload {
+  bool is_success = 1;
+}
+
+service UserService {
+  rpc Users(google.protobuf.Empty) returns (UsersResponse);
+  rpc User(UserID) returns (UserPayload);
+  rpc UserByAuth(google.protobuf.Empty) returns (UserPayload);
+  rpc RegisterUser(UserInput) returns (UserPayload);
+  rpc SubscribeChannel(SubscribeChannelInput) returns (SubscriptionPayload);
+  rpc UnSubscribeChannel(SubscribeChannelInput) returns (SubscriptionPayload);
+}
+
+message UserID {
+  string id = 1;
+}
+
+message UsersResponse {
+  repeated UserPayload users = 1;
+}
