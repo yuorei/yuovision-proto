@@ -25,11 +25,19 @@ message UploadVideoInput {
   string user_id = 5;
 }
 
+message UploadThumbnailInput {
+  bytes thumbnail_image = 1;
+}
+
+message UploadThumbnailPayload {
+  bool success = 1;
+}
 
 service VideoService {
   rpc Videos(google.protobuf.Empty) returns (VideosResponse);
   rpc Video(VideoID) returns (VideoPayload);
   rpc UploadVideo(UploadVideoInput) returns (VideoPayload);
+  rpc UploadThumbnail(UploadThumbnailInput) returns (UploadThumbnailPayload);
 }
 
 message VideoID {
