@@ -17,18 +17,27 @@ message VideoPayload {
   string user_id = 8;
 }
 
-message UploadVideoInput {
+message VideoMeta {
   string id = 1;
-  bytes video = 2;
-  bytes thumbnail_image = 3;
-  string title = 4;
-  string description = 5;
-  string user_id = 6;
+  string thumbnail_image_url = 2;
+  string title = 3;
+  string description = 4;
+  string user_id = 5;
+}
+
+message UploadVideoInput {
+  oneof value {
+    VideoMeta meta = 1;
+    bytes video = 2;
+  }
 }
 
 message UploadThumbnailInput {
-  string id = 1;
-  bytes thumbnail_image = 2;
+  oneof value {
+    string id = 1;
+    bytes thumbnail_image = 2;
+  }
+
 }
 
 message UploadThumbnailPayload {
@@ -38,8 +47,8 @@ message UploadThumbnailPayload {
 service VideoService {
   rpc Videos(google.protobuf.Empty) returns (VideosResponse);
   rpc Video(VideoID) returns (VideoPayload);
-  rpc UploadVideo(UploadVideoInput) returns (VideoPayload);
-  rpc UploadThumbnail(UploadThumbnailInput) returns (UploadThumbnailPayload);
+  rpc UploadVideo(stream UploadVideoInput) returns (VideoPayload);
+  rpc UploadThumbnail(stream UploadThumbnailInput) returns (UploadThumbnailPayload);
 }
 
 message VideoID {
