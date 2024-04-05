@@ -20,9 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	VideoService_Videos_FullMethodName      = "/video.VideoService/Videos"
-	VideoService_Video_FullMethodName       = "/video.VideoService/Video"
-	VideoService_UploadVideo_FullMethodName = "/video.VideoService/UploadVideo"
+	VideoService_Videos_FullMethodName          = "/video.VideoService/Videos"
+	VideoService_Video_FullMethodName           = "/video.VideoService/Video"
+	VideoService_UploadVideo_FullMethodName     = "/video.VideoService/UploadVideo"
+	VideoService_UploadThumbnail_FullMethodName = "/video.VideoService/UploadThumbnail"
 )
 
 // VideoServiceClient is the client API for VideoService service.
@@ -32,6 +33,7 @@ type VideoServiceClient interface {
 	Videos(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*VideosResponse, error)
 	Video(ctx context.Context, in *VideoID, opts ...grpc.CallOption) (*VideoPayload, error)
 	UploadVideo(ctx context.Context, in *UploadVideoInput, opts ...grpc.CallOption) (*VideoPayload, error)
+	UploadThumbnail(ctx context.Context, in *UploadThumbnailInput, opts ...grpc.CallOption) (*UploadThumbnailPayload, error)
 }
 
 type videoServiceClient struct {
@@ -69,6 +71,15 @@ func (c *videoServiceClient) UploadVideo(ctx context.Context, in *UploadVideoInp
 	return out, nil
 }
 
+func (c *videoServiceClient) UploadThumbnail(ctx context.Context, in *UploadThumbnailInput, opts ...grpc.CallOption) (*UploadThumbnailPayload, error) {
+	out := new(UploadThumbnailPayload)
+	err := c.cc.Invoke(ctx, VideoService_UploadThumbnail_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VideoServiceServer is the server API for VideoService service.
 // All implementations must embed UnimplementedVideoServiceServer
 // for forward compatibility
@@ -76,6 +87,7 @@ type VideoServiceServer interface {
 	Videos(context.Context, *empty.Empty) (*VideosResponse, error)
 	Video(context.Context, *VideoID) (*VideoPayload, error)
 	UploadVideo(context.Context, *UploadVideoInput) (*VideoPayload, error)
+	UploadThumbnail(context.Context, *UploadThumbnailInput) (*UploadThumbnailPayload, error)
 	mustEmbedUnimplementedVideoServiceServer()
 }
 
@@ -91,6 +103,9 @@ func (UnimplementedVideoServiceServer) Video(context.Context, *VideoID) (*VideoP
 }
 func (UnimplementedVideoServiceServer) UploadVideo(context.Context, *UploadVideoInput) (*VideoPayload, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadVideo not implemented")
+}
+func (UnimplementedVideoServiceServer) UploadThumbnail(context.Context, *UploadThumbnailInput) (*UploadThumbnailPayload, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadThumbnail not implemented")
 }
 func (UnimplementedVideoServiceServer) mustEmbedUnimplementedVideoServiceServer() {}
 
@@ -159,6 +174,24 @@ func _VideoService_UploadVideo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VideoService_UploadThumbnail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadThumbnailInput)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).UploadThumbnail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VideoService_UploadThumbnail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).UploadThumbnail(ctx, req.(*UploadThumbnailInput))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VideoService_ServiceDesc is the grpc.ServiceDesc for VideoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,6 +210,10 @@ var VideoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UploadVideo",
 			Handler:    _VideoService_UploadVideo_Handler,
+		},
+		{
+			MethodName: "UploadThumbnail",
+			Handler:    _VideoService_UploadThumbnail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
