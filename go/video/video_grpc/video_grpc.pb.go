@@ -32,8 +32,8 @@ const (
 type VideoServiceClient interface {
 	Videos(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*VideosResponse, error)
 	Video(ctx context.Context, in *VideoID, opts ...grpc.CallOption) (*VideoPayload, error)
-	UploadVideo(ctx context.Context, in *UploadVideoInput, opts ...grpc.CallOption) (*VideoPayload, error)
-	UploadThumbnail(ctx context.Context, in *UploadThumbnailInput, opts ...grpc.CallOption) (*UploadThumbnailPayload, error)
+	UploadVideo(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadVideoClient, error)
+	UploadThumbnail(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadThumbnailClient, error)
 }
 
 type videoServiceClient struct {
@@ -62,22 +62,72 @@ func (c *videoServiceClient) Video(ctx context.Context, in *VideoID, opts ...grp
 	return out, nil
 }
 
-func (c *videoServiceClient) UploadVideo(ctx context.Context, in *UploadVideoInput, opts ...grpc.CallOption) (*VideoPayload, error) {
-	out := new(VideoPayload)
-	err := c.cc.Invoke(ctx, VideoService_UploadVideo_FullMethodName, in, out, opts...)
+func (c *videoServiceClient) UploadVideo(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadVideoClient, error) {
+	stream, err := c.cc.NewStream(ctx, &VideoService_ServiceDesc.Streams[0], VideoService_UploadVideo_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &videoServiceUploadVideoClient{stream}
+	return x, nil
 }
 
-func (c *videoServiceClient) UploadThumbnail(ctx context.Context, in *UploadThumbnailInput, opts ...grpc.CallOption) (*UploadThumbnailPayload, error) {
-	out := new(UploadThumbnailPayload)
-	err := c.cc.Invoke(ctx, VideoService_UploadThumbnail_FullMethodName, in, out, opts...)
+type VideoService_UploadVideoClient interface {
+	Send(*UploadVideoInput) error
+	CloseAndRecv() (*VideoPayload, error)
+	grpc.ClientStream
+}
+
+type videoServiceUploadVideoClient struct {
+	grpc.ClientStream
+}
+
+func (x *videoServiceUploadVideoClient) Send(m *UploadVideoInput) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *videoServiceUploadVideoClient) CloseAndRecv() (*VideoPayload, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(VideoPayload)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *videoServiceClient) UploadThumbnail(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadThumbnailClient, error) {
+	stream, err := c.cc.NewStream(ctx, &VideoService_ServiceDesc.Streams[1], VideoService_UploadThumbnail_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &videoServiceUploadThumbnailClient{stream}
+	return x, nil
+}
+
+type VideoService_UploadThumbnailClient interface {
+	Send(*UploadThumbnailInput) error
+	CloseAndRecv() (*UploadThumbnailPayload, error)
+	grpc.ClientStream
+}
+
+type videoServiceUploadThumbnailClient struct {
+	grpc.ClientStream
+}
+
+func (x *videoServiceUploadThumbnailClient) Send(m *UploadThumbnailInput) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *videoServiceUploadThumbnailClient) CloseAndRecv() (*UploadThumbnailPayload, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(UploadThumbnailPayload)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // VideoServiceServer is the server API for VideoService service.
@@ -86,8 +136,8 @@ func (c *videoServiceClient) UploadThumbnail(ctx context.Context, in *UploadThum
 type VideoServiceServer interface {
 	Videos(context.Context, *empty.Empty) (*VideosResponse, error)
 	Video(context.Context, *VideoID) (*VideoPayload, error)
-	UploadVideo(context.Context, *UploadVideoInput) (*VideoPayload, error)
-	UploadThumbnail(context.Context, *UploadThumbnailInput) (*UploadThumbnailPayload, error)
+	UploadVideo(VideoService_UploadVideoServer) error
+	UploadThumbnail(VideoService_UploadThumbnailServer) error
 	mustEmbedUnimplementedVideoServiceServer()
 }
 
@@ -101,11 +151,11 @@ func (UnimplementedVideoServiceServer) Videos(context.Context, *empty.Empty) (*V
 func (UnimplementedVideoServiceServer) Video(context.Context, *VideoID) (*VideoPayload, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Video not implemented")
 }
-func (UnimplementedVideoServiceServer) UploadVideo(context.Context, *UploadVideoInput) (*VideoPayload, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UploadVideo not implemented")
+func (UnimplementedVideoServiceServer) UploadVideo(VideoService_UploadVideoServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadVideo not implemented")
 }
-func (UnimplementedVideoServiceServer) UploadThumbnail(context.Context, *UploadThumbnailInput) (*UploadThumbnailPayload, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UploadThumbnail not implemented")
+func (UnimplementedVideoServiceServer) UploadThumbnail(VideoService_UploadThumbnailServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadThumbnail not implemented")
 }
 func (UnimplementedVideoServiceServer) mustEmbedUnimplementedVideoServiceServer() {}
 
@@ -156,40 +206,56 @@ func _VideoService_Video_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _VideoService_UploadVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadVideoInput)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).UploadVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: VideoService_UploadVideo_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).UploadVideo(ctx, req.(*UploadVideoInput))
-	}
-	return interceptor(ctx, in, info, handler)
+func _VideoService_UploadVideo_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(VideoServiceServer).UploadVideo(&videoServiceUploadVideoServer{stream})
 }
 
-func _VideoService_UploadThumbnail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadThumbnailInput)
-	if err := dec(in); err != nil {
+type VideoService_UploadVideoServer interface {
+	SendAndClose(*VideoPayload) error
+	Recv() (*UploadVideoInput, error)
+	grpc.ServerStream
+}
+
+type videoServiceUploadVideoServer struct {
+	grpc.ServerStream
+}
+
+func (x *videoServiceUploadVideoServer) SendAndClose(m *VideoPayload) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *videoServiceUploadVideoServer) Recv() (*UploadVideoInput, error) {
+	m := new(UploadVideoInput)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(VideoServiceServer).UploadThumbnail(ctx, in)
+	return m, nil
+}
+
+func _VideoService_UploadThumbnail_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(VideoServiceServer).UploadThumbnail(&videoServiceUploadThumbnailServer{stream})
+}
+
+type VideoService_UploadThumbnailServer interface {
+	SendAndClose(*UploadThumbnailPayload) error
+	Recv() (*UploadThumbnailInput, error)
+	grpc.ServerStream
+}
+
+type videoServiceUploadThumbnailServer struct {
+	grpc.ServerStream
+}
+
+func (x *videoServiceUploadThumbnailServer) SendAndClose(m *UploadThumbnailPayload) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *videoServiceUploadThumbnailServer) Recv() (*UploadThumbnailInput, error) {
+	m := new(UploadThumbnailInput)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
 	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: VideoService_UploadThumbnail_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServiceServer).UploadThumbnail(ctx, req.(*UploadThumbnailInput))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 // VideoService_ServiceDesc is the grpc.ServiceDesc for VideoService service.
@@ -207,15 +273,18 @@ var VideoService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Video",
 			Handler:    _VideoService_Video_Handler,
 		},
+	},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "UploadVideo",
-			Handler:    _VideoService_UploadVideo_Handler,
+			StreamName:    "UploadVideo",
+			Handler:       _VideoService_UploadVideo_Handler,
+			ClientStreams: true,
 		},
 		{
-			MethodName: "UploadThumbnail",
-			Handler:    _VideoService_UploadThumbnail_Handler,
+			StreamName:    "UploadThumbnail",
+			Handler:       _VideoService_UploadThumbnail_Handler,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "video.proto",
 }
