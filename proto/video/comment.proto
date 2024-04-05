@@ -11,7 +11,7 @@ message Comment {
   string text = 3;
   google.protobuf.Timestamp created_at = 4;
   google.protobuf.Timestamp updated_at = 5;
-  User user = 6;
+  string user_id = 6;
 }
 
 message PostCommentInput {
@@ -25,7 +25,7 @@ message PostCommentPayload {
   string text = 3;
   google.protobuf.Timestamp created_at = 4;
   google.protobuf.Timestamp updated_at = 5;
-  User user = 6;
+  string user_id = 6;
 }
 
 service CommentService {
@@ -46,13 +46,6 @@ message CommentsResponse {
   repeated Comment comments = 1;
 }
 
-message User {
-  string id = 1;
-  string name = 2;
-  string profile_image_url = 3;
-  repeated string subscribe_channel_ids = 4;
-}
-
 message Video {
   string id = 1;
   string video_url = 2;
@@ -61,5 +54,5 @@ message Video {
   string description = 5;
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
-  User uploader = 8;
+  string user_id = 8;
 }

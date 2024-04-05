@@ -18,15 +18,17 @@ message VideoPayload {
 }
 
 message UploadVideoInput {
-  bytes video = 1;
-  bytes thumbnail_image = 2;
-  string title = 3;
-  string description = 4;
-  string user_id = 5;
+  string id = 1;
+  bytes video = 2;
+  bytes thumbnail_image = 3;
+  string title = 4;
+  string description = 5;
+  string user_id = 6;
 }
 
 message UploadThumbnailInput {
-  bytes thumbnail_image = 1;
+  string id = 1;
+  bytes thumbnail_image = 2;
 }
 
 message UploadThumbnailPayload {
