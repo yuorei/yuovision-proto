@@ -25,6 +25,11 @@ message VideoMeta {
   string user_id = 5;
 }
 
+message ThumbnailMeta {
+  string id = 1;
+  string content_type = 2;
+}
+
 message UploadVideoInput {
   oneof value {
     VideoMeta meta = 1;
@@ -34,7 +39,7 @@ message UploadVideoInput {
 
 message UploadThumbnailInput {
   oneof value {
-    string id = 1;
+    ThumbnailMeta meta = 1;
     bytes thumbnail_image = 2;
   }
 
