@@ -14,11 +14,15 @@ message UserPayload {
 }
 
 message UserInput {
-  string name = 1;
+  string id = 1;
+  string name = 2;
+  string profile_image_url = 3;
+  repeated string subscribe_channel_ids = 4;
 }
 
 message SubscribeChannelInput {
   string channel_id = 1;
+  string user_id = 2;
 }
 
 message SubscriptionPayload {
