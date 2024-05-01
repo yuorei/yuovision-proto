@@ -51,12 +51,17 @@ message UploadThumbnailPayload {
 
 service VideoService {
   rpc Videos(google.protobuf.Empty) returns (VideosResponse);
+  rpc VideosByUserID(UserID) returns (VideoPayload);
   rpc Video(VideoID) returns (VideoPayload);
   rpc UploadVideo(stream UploadVideoInput) returns (VideoPayload);
   rpc UploadThumbnail(stream UploadThumbnailInput) returns (UploadThumbnailPayload);
 }
 
 message VideoID {
+  string id = 1;
+}
+
+message UserID {
   string id = 1;
 }
 
