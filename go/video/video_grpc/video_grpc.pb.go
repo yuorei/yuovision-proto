@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	VideoService_Videos_FullMethodName          = "/video.VideoService/Videos"
+	VideoService_VideosByUserID_FullMethodName  = "/video.VideoService/VideosByUserID"
 	VideoService_Video_FullMethodName           = "/video.VideoService/Video"
 	VideoService_UploadVideo_FullMethodName     = "/video.VideoService/UploadVideo"
 	VideoService_UploadThumbnail_FullMethodName = "/video.VideoService/UploadThumbnail"
@@ -31,6 +32,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VideoServiceClient interface {
 	Videos(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*VideosResponse, error)
+	VideosByUserID(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*VideoPayload, error)
 	Video(ctx context.Context, in *VideoID, opts ...grpc.CallOption) (*VideoPayload, error)
 	UploadVideo(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadVideoClient, error)
 	UploadThumbnail(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadThumbnailClient, error)
@@ -47,6 +49,15 @@ func NewVideoServiceClient(cc grpc.ClientConnInterface) VideoServiceClient {
 func (c *videoServiceClient) Videos(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*VideosResponse, error) {
 	out := new(VideosResponse)
 	err := c.cc.Invoke(ctx, VideoService_Videos_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *videoServiceClient) VideosByUserID(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*VideoPayload, error) {
+	out := new(VideoPayload)
+	err := c.cc.Invoke(ctx, VideoService_VideosByUserID_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -135,6 +146,7 @@ func (x *videoServiceUploadThumbnailClient) CloseAndRecv() (*UploadThumbnailPayl
 // for forward compatibility
 type VideoServiceServer interface {
 	Videos(context.Context, *empty.Empty) (*VideosResponse, error)
+	VideosByUserID(context.Context, *UserID) (*VideoPayload, error)
 	Video(context.Context, *VideoID) (*VideoPayload, error)
 	UploadVideo(VideoService_UploadVideoServer) error
 	UploadThumbnail(VideoService_UploadThumbnailServer) error
@@ -147,6 +159,9 @@ type UnimplementedVideoServiceServer struct {
 
 func (UnimplementedVideoServiceServer) Videos(context.Context, *empty.Empty) (*VideosResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Videos not implemented")
+}
+func (UnimplementedVideoServiceServer) VideosByUserID(context.Context, *UserID) (*VideoPayload, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VideosByUserID not implemented")
 }
 func (UnimplementedVideoServiceServer) Video(context.Context, *VideoID) (*VideoPayload, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Video not implemented")
@@ -184,6 +199,24 @@ func _VideoService_Videos_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(VideoServiceServer).Videos(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VideoService_VideosByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).VideosByUserID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VideoService_VideosByUserID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).VideosByUserID(ctx, req.(*UserID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -268,6 +301,10 @@ var VideoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Videos",
 			Handler:    _VideoService_Videos_Handler,
+		},
+		{
+			MethodName: "VideosByUserID",
+			Handler:    _VideoService_VideosByUserID_Handler,
 		},
 		{
 			MethodName: "Video",
