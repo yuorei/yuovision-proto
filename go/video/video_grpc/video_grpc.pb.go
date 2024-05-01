@@ -32,7 +32,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VideoServiceClient interface {
 	Videos(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*VideosResponse, error)
-	VideosByUserID(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*VideoPayload, error)
+	VideosByUserID(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*VideosResponse, error)
 	Video(ctx context.Context, in *VideoID, opts ...grpc.CallOption) (*VideoPayload, error)
 	UploadVideo(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadVideoClient, error)
 	UploadThumbnail(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadThumbnailClient, error)
@@ -55,8 +55,8 @@ func (c *videoServiceClient) Videos(ctx context.Context, in *empty.Empty, opts .
 	return out, nil
 }
 
-func (c *videoServiceClient) VideosByUserID(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*VideoPayload, error) {
-	out := new(VideoPayload)
+func (c *videoServiceClient) VideosByUserID(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*VideosResponse, error) {
+	out := new(VideosResponse)
 	err := c.cc.Invoke(ctx, VideoService_VideosByUserID_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -146,7 +146,7 @@ func (x *videoServiceUploadThumbnailClient) CloseAndRecv() (*UploadThumbnailPayl
 // for forward compatibility
 type VideoServiceServer interface {
 	Videos(context.Context, *empty.Empty) (*VideosResponse, error)
-	VideosByUserID(context.Context, *UserID) (*VideoPayload, error)
+	VideosByUserID(context.Context, *UserID) (*VideosResponse, error)
 	Video(context.Context, *VideoID) (*VideoPayload, error)
 	UploadVideo(VideoService_UploadVideoServer) error
 	UploadThumbnail(VideoService_UploadThumbnailServer) error
@@ -160,7 +160,7 @@ type UnimplementedVideoServiceServer struct {
 func (UnimplementedVideoServiceServer) Videos(context.Context, *empty.Empty) (*VideosResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Videos not implemented")
 }
-func (UnimplementedVideoServiceServer) VideosByUserID(context.Context, *UserID) (*VideoPayload, error) {
+func (UnimplementedVideoServiceServer) VideosByUserID(context.Context, *UserID) (*VideosResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VideosByUserID not implemented")
 }
 func (UnimplementedVideoServiceServer) Video(context.Context, *VideoID) (*VideoPayload, error) {
