@@ -11,6 +11,8 @@ message UserPayload {
   string name = 2;
   string profile_image_url = 3;
   repeated string subscribe_channel_ids = 4;
+  bool is_subscribed = 5;
+  Role role = 6;
 }
 
 message UserInput {
@@ -18,6 +20,8 @@ message UserInput {
   string name = 2;
   string profile_image_url = 3;
   repeated string subscribe_channel_ids = 4;
+  bool is_subscribed = 5;
+  Role role = 6;
 }
 
 message SubscribeChannelInput {
@@ -44,4 +48,10 @@ message UserID {
 
 message UsersResponse {
   repeated UserPayload users = 1;
+}
+
+enum Role {
+  ADMIN = 0;
+  NORMAL = 1;
+  ADS = 2;
 }
