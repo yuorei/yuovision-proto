@@ -13,6 +13,8 @@ message Comment {
   google.protobuf.Timestamp updated_at = 5;
   string user_id = 6;
   string name = 7;
+  bool is_owner = 8;
+  bool is_subscribed = 9;
 }
 
 message PostCommentInput {
