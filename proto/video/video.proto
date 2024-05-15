@@ -15,14 +15,24 @@ message VideoPayload {
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
   string user_id = 8;
+  repeated string tags = 9;
+  bool private = 10;
+  bool adult = 11;
+  bool external_cutout = 12;
+  bool is_ad = 13;
 }
 
 message VideoMeta {
   string id = 1;
-  string thumbnail_image_url = 2;
+  string user_id = 2;
   string title = 3;
   string description = 4;
-  string user_id = 5;
+  string thumbnail_image_url = 5;
+  repeated string tags = 6;
+  bool private = 7;
+  bool adult = 8;
+  bool external_cutout = 9;
+  bool is_ad = 10;
 }
 
 message ThumbnailMeta {
