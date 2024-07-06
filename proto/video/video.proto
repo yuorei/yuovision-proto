@@ -80,7 +80,7 @@ message CutVideoInput {
 }
 
 message CutVideoPayload {
-  stgring video_url = 1;
+  string video_url = 1;
 }
 
 service VideoService {
