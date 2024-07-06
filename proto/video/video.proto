@@ -59,12 +59,39 @@ message UploadThumbnailPayload {
   bool success = 1;
 }
 
+message WatchCountInput {
+  string video_id = 1;
+}
+
+message WatchCountPayload {
+  int32 count = 1;
+}
+
+message IncrementWatchCountInput {
+  string video_id = 1;
+  string user_id = 2;
+}
+
+message CutVideoInput {
+  string video_id = 1;
+  string user_id = 2;
+  int32 start = 3;
+  int32 end = 4;
+}
+
+message CutVideoPayload {
+  stgring video_url = 1;
+}
+
 service VideoService {
   rpc Videos(google.protobuf.Empty) returns (VideosResponse);
   rpc VideosByUserID(VideoUserID) returns (VideosResponse);
   rpc Video(VideoID) returns (VideoPayload);
   rpc UploadVideo(stream UploadVideoInput) returns (VideoPayload);
   rpc UploadThumbnail(stream UploadThumbnailInput) returns (UploadThumbnailPayload);
+  rpc WatchCount(WatchCountInput) returns (WatchCountPayload);
+  rpc IncrementWatchCount(IncrementWatchCountInput) returns (WatchCountPayload);
+  rpc CutVideo(CutVideoInput) returns (CutVideoPayload);
 }
 
 message VideoID {
