@@ -20,6 +20,7 @@ message VideoPayload {
   bool adult = 11;
   bool external_cutout = 12;
   bool is_ad = 13;
+  int32 watch_count = 14;
 }
 
 message VideoMeta {
