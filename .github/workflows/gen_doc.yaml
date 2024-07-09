@@ -29,11 +29,11 @@ jobs:
     - name: Generate HTML docs
       run: |
         mkdir -p ./doc
-        protoc --doc_out=./doc --doc_opt=html,index.html proto/**/*.proto
+        protoc --doc_out=./doc --doc_opt=html,index.html proto/video/*.proto
 
     - name: Generate Markdown docs
       run: |
-        protoc --doc_out=./doc --doc_opt=markdown,index.md proto/**/*.proto
+        protoc --doc_out=./doc --doc_opt=markdown,index.md proto/video/*.proto
 
     - name: Commit and push changes
       env:
