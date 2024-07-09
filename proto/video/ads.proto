@@ -1,0 +1,8 @@
+syntax = "proto3";
+package ads;
+
+option go_package = "/video_grpc";
+
+message Ads {
+  string id = 1;
+}
