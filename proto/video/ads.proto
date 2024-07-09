@@ -3,6 +3,4 @@ package ads;
 
 option go_package = "/video_grpc";
 
-message Ads {
-  string id = 1;
-}
+message Ads { string id = 1; }
