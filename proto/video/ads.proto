@@ -5,4 +5,5 @@ option go_package = "/video_grpc";
 
 message Ads {
   string id = 1;
+  string title = 2;
 }
