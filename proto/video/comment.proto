@@ -40,17 +40,11 @@ service CommentService {
   rpc PostComment(PostCommentInput) returns (PostCommentPayload);
 }
 
-message CommentID {
-  string id = 1;
-}
+message CommentID { string id = 1; }
 
-message CommentsByVideoInput {
-  string video_id = 1;
-}
+message CommentsByVideoInput { string video_id = 1; }
 
-message CommentsResponse {
-  repeated Comment comments = 1;
-}
+message CommentsResponse { repeated Comment comments = 1; }
 
 message Video {
   string id = 1;

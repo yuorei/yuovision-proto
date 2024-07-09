@@ -53,20 +53,13 @@ message UploadThumbnailInput {
     ThumbnailMeta meta = 1;
     bytes thumbnail_image = 2;
   }
-
 }
 
-message UploadThumbnailPayload {
-  bool success = 1;
-}
+message UploadThumbnailPayload { bool success = 1; }
 
-message WatchCountInput {
-  string video_id = 1;
-}
+message WatchCountInput { string video_id = 1; }
 
-message WatchCountPayload {
-  int32 count = 1;
-}
+message WatchCountPayload { int32 count = 1; }
 
 message IncrementWatchCountInput {
   string video_id = 1;
@@ -80,29 +73,22 @@ message CutVideoInput {
   int32 end = 4;
 }
 
-message CutVideoPayload {
-  string video_url = 1;
-}
+message CutVideoPayload { string video_url = 1; }
 
 service VideoService {
   rpc Videos(google.protobuf.Empty) returns (VideosResponse);
   rpc VideosByUserID(VideoUserID) returns (VideosResponse);
   rpc Video(VideoID) returns (VideoPayload);
   rpc UploadVideo(stream UploadVideoInput) returns (VideoPayload);
-  rpc UploadThumbnail(stream UploadThumbnailInput) returns (UploadThumbnailPayload);
+  rpc UploadThumbnail(stream UploadThumbnailInput)
+      returns (UploadThumbnailPayload);
   rpc WatchCount(WatchCountInput) returns (WatchCountPayload);
   rpc IncrementWatchCount(IncrementWatchCountInput) returns (WatchCountPayload);
   rpc CutVideo(CutVideoInput) returns (CutVideoPayload);
 }
 
-message VideoID {
-  string id = 1;
-}
+message VideoID { string id = 1; }
 
-message VideoUserID {
-  string id = 1;
-}
+message VideoUserID { string id = 1; }
 
-message VideosResponse {
-  repeated VideoPayload videos = 1;
-}
+message VideosResponse { repeated VideoPayload videos = 1; }

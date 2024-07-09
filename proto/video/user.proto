@@ -29,9 +29,7 @@ message SubscribeChannelInput {
   string user_id = 2;
 }
 
-message SubscriptionPayload {
-  bool is_success = 1;
-}
+message SubscriptionPayload { bool is_success = 1; }
 
 service UserService {
   rpc Users(google.protobuf.Empty) returns (UsersResponse);
@@ -42,13 +40,9 @@ service UserService {
   rpc UnSubscribeChannel(SubscribeChannelInput) returns (SubscriptionPayload);
 }
 
-message UserID {
-  string id = 1;
-}
+message UserID { string id = 1; }
 
-message UsersResponse {
-  repeated UserPayload users = 1;
-}
+message UsersResponse { repeated UserPayload users = 1; }
 
 enum Role {
   ADMIN = 0;
