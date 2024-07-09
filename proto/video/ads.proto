@@ -1,6 +1,0 @@
-syntax = "proto3";
-package ads;
-
-option go_package = "/video_grpc";
-
-import "google/protobuf/ads.proto";
