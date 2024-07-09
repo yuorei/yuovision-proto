@@ -3,10 +3,10 @@ name: Generate Protobuf Docs
 on:
   push:
     branches:
-      - main  # ワークフローをトリガーするブランチ
+      - main
   pull_request:
     branches:
-      - main  # ワークフローをトリガーするブランチ
+      - main
 
 jobs:
   generate-docs:
@@ -29,11 +29,11 @@ jobs:
     - name: Generate HTML docs
       run: |
         mkdir -p ./doc
-        find . -name "*.proto" | xargs protoc --doc_out=./doc --doc_opt=html,index.html
+        protoc --doc_out=./doc --doc_opt=html,index.html proto/**/*.proto
 
     - name: Generate Markdown docs
       run: |
-        find . -name "*.proto" | xargs protoc --doc_out=./doc --doc_opt=markdown,index.md
+        protoc --doc_out=./doc --doc_opt=markdown,index.md proto/**/*.proto
 
     - name: Commit and push changes
       env:
